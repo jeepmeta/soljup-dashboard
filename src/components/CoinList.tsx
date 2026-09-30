@@ -10,9 +10,10 @@ interface Props {
 
 export function CoinList({ coins, prices, activeMint, onSelect, onRemove }: Props) {
   return (
-    <div style={{ flex: 1, overflowY: 'auto', padding: '0 6px 8px' }}>
-      {coins.map((c) => {
+    <div style={{ flex: 1, overflowY: 'auto', padding: '0 4px 8px' }}>
+      {coins.map((c, i) => {
         const price = prices[c.id];
+        const idx = String(i + 1).padStart(2, '0');
         return (
           <div
             key={c.id}
@@ -23,53 +24,79 @@ export function CoinList({ coins, prices, activeMint, onSelect, onRemove }: Prop
               style={{
                 width: 28,
                 height: 28,
-                borderRadius: '50%',
-                background: 'linear-gradient(135deg, #622CA7, #2A4EBF)',
+                background: 'var(--bg-inset)',
+                border: '1px solid var(--border)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: 10,
-                fontFamily: 'var(--font-display)',
+                fontFamily: 'var(--font-pixel)',
+                fontSize: 7,
+                color: activeMint === c.id ? 'var(--phosphor)' : 'var(--text-muted)',
                 flexShrink: 0,
-                border: '1px solid var(--border)',
               }}
             >
               {c.symbol.slice(0, 2)}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: 4 }}>
-                <span className="font-display" style={{ fontSize: 13 }}>
+                <span
+                  style={{
+                    fontFamily: 'var(--font-pixel)',
+                    fontSize: 8,
+                    letterSpacing: '0.06em',
+                    color: activeMint === c.id ? 'var(--phosphor)' : 'var(--text-primary)',
+                  }}
+                >
+                  <span className="text-muted" style={{ fontSize: 7, marginRight: 4 }}>{idx}</span>
                   {c.symbol}
                 </span>
-                <span style={{ fontSize: 11, fontVariantNumeric: 'tabular-nums' }}>
+                <span
+                  style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: 13,
+                    color: price != null ? 'var(--phosphor)' : 'var(--text-dim)',
+                    fontVariantNumeric: 'tabular-nums',
+                  }}
+                >
                   {price != null
                     ? price < 0.01
                       ? price.toExponential(2)
                       : price.toLocaleString(undefined, { maximumFractionDigits: 6 })
-                    : '—'}
+                    : '—.—'}
                 </span>
               </div>
-              <div className="text-muted" style={{ fontSize: 10, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <div
+                className="text-muted"
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: 12,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
                 {c.name}
               </div>
             </div>
             <button
               className="btn btn-ghost"
-              style={{ padding: '2px 6px', fontSize: 10 }}
+              style={{ padding: '4px 6px', fontSize: 7 }}
               onClick={(e) => {
                 e.stopPropagation();
                 onRemove(c.id);
               }}
-              title="Remove"
+              title="Purge from watchlist"
             >
-              ×
+              X
             </button>
           </div>
         );
       })}
       {coins.length === 0 && (
-        <div className="text-muted" style={{ padding: 16, textAlign: 'center', fontSize: 12 }}>
-          Paste a mint or search a symbol to start building your list (up to 200).
+        <div className="text-muted" style={{ padding: 16, textAlign: 'center', fontFamily: 'var(--font-mono)', fontSize: 13 }}>
+          // EMPTY BUFFER
+          <br />
+          PASTE MINT OR QUERY SYMBOL
         </div>
       )}
     </div>
