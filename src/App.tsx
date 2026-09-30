@@ -51,13 +51,13 @@ export default function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [widgets, setWidgets] = useState<CanvasWidget[]>([
-    { id: 'w1', type: 'chart', title: 'Price Chart', x: 0, y: 0, w: 2, h: 2 },
-    { id: 'w2', type: 'stats', title: 'Key Stats', x: 2, y: 0, w: 1, h: 1 },
-    { id: 'w3', type: 'news', title: 'Filtered News', x: 2, y: 1, w: 1, h: 1 },
-    { id: 'w4', type: 'blank', title: 'Open Canvas', x: 0, y: 2, w: 3, h: 1 },
+    { id: 'w1', type: 'chart', title: 'CHART.FEED', x: 0, y: 0, w: 2, h: 2 },
+    { id: 'w2', type: 'stats', title: 'SYS.STATS', x: 2, y: 0, w: 1, h: 1 },
+    { id: 'w3', type: 'news', title: 'SIG.INTEL', x: 2, y: 1, w: 1, h: 1 },
+    { id: 'w4', type: 'blank', title: 'OPEN.CANVAS', x: 0, y: 2, w: 3, h: 1 },
   ]);
   const [prices, setPrices] = useState<Record<string, number>>({});
-  const [status, setStatus] = useState('Ready');
+  const [status, setStatus] = useState('SYS.READY');
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
@@ -81,9 +81,9 @@ export default function App() {
           if (v?.usdPrice != null) map[mint] = v.usdPrice;
         }
         setPrices(map);
-        setStatus(`Prices updated · ${new Date().toLocaleTimeString()}`);
+        setStatus(`PX.SYNC · ${new Date().toLocaleTimeString()}`);
       } catch {
-        setStatus('Price feed limited — add Jupiter API key in Settings');
+        setStatus('PX.LIMITED — SET JUP KEY IN SYS.CFG');
       }
     };
     tick();
@@ -99,7 +99,7 @@ export default function App() {
   const addCoin = useCallback(
     async (query: string) => {
       if (!query.trim()) return;
-      setStatus('Searching…');
+      setStatus('QUERY…');
       const results = await searchTokens(query.trim());
       const hit = results[0];
       if (!hit) {
@@ -119,9 +119,9 @@ export default function App() {
             return [newCoin, ...prev];
           });
           setActiveMint(newCoin.id);
-          setStatus('Added by mint');
+          setStatus('MINT.ADDED');
         } else {
-          setStatus('No token found');
+          setStatus('NO.HIT');
         }
         return;
       }
@@ -143,7 +143,7 @@ export default function App() {
       });
       setActiveMint(mint);
       setSearchQuery('');
-      setStatus(`Added ${newCoin.symbol}`);
+      setStatus(`ADDED · ${newCoin.symbol}`);
     },
     [settings.maxWatchlist]
   );
@@ -161,12 +161,12 @@ export default function App() {
         activeSymbol={activeCoin?.symbol}
       />
 
-      <div style={{ display: 'flex', flex: 1, minHeight: 0, gap: 8, padding: 8 }}>
-        <aside style={{ width: 260, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div style={{ display: 'flex', flex: 1, minHeight: 0, gap: 6, padding: 8 }}>
+        <aside style={{ width: 268, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
           <div className="panel" style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
             <div className="panel-header">
-              <span>Watchlist</span>
-              <span className="text-muted" style={{ fontSize: 11 }}>
+              <span>WATCHLIST</span>
+              <span className="text-muted" style={{ fontFamily: 'var(--font-mono)', fontSize: 12, letterSpacing: '0.05em' }}>
                 {coins.length}/{settings.maxWatchlist}
               </span>
             </div>
@@ -180,11 +180,11 @@ export default function App() {
               >
                 <input
                   className="input"
-                  placeholder="Mint / symbol / name…"
+                  placeholder="MINT // SYMBOL // QUERY"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <button type="submit" className="btn btn-green" style={{ padding: '6px 10px' }}>
+                <button type="submit" className="btn btn-green" style={{ padding: '8px 10px' }}>
                   +
                 </button>
               </form>
@@ -199,7 +199,7 @@ export default function App() {
           </div>
         </aside>
 
-        <main style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <main style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
           <CanvasBoard
             widgets={widgets}
             setWidgets={setWidgets}
