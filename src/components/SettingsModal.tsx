@@ -34,7 +34,7 @@ export function SettingsModal({ settings, onChange, onClose }: Props) {
       style={{
         position: 'fixed',
         inset: 0,
-        background: 'rgba(0,0,0,0.65)',
+        background: 'rgba(0,0,0,0.78)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -48,15 +48,15 @@ export function SettingsModal({ settings, onChange, onClose }: Props) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="panel-header">
-          <span>Settings</span>
-          <button className="btn btn-ghost" onClick={onClose}>×</button>
+          <span>SYS.CFG</span>
+          <button className="btn btn-ghost" onClick={onClose}>X</button>
         </div>
 
         <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 16 }}>
           <section>
-            <h3 className="font-display" style={{ fontSize: 14, marginBottom: 8 }}>Jupiter API</h3>
-            <label className="text-muted" style={{ fontSize: 11, display: 'block', marginBottom: 4 }}>
-              Free API key from developers.jup.ag (optional — improves rate limits)
+            <h3 className="font-display" style={{ fontSize: 9, marginBottom: 8, color: 'var(--phosphor)' }}>JUPITER.API</h3>
+            <label className="text-muted" style={{ fontSize: 12, display: 'block', marginBottom: 4, fontFamily: 'var(--font-mono)' }}>
+              Free key · developers.jup.ag (optional)
             </label>
             <input
               className="input"
@@ -65,8 +65,8 @@ export function SettingsModal({ settings, onChange, onClose }: Props) {
               value={local.jupiterApiKey || ''}
               onChange={(e) => setLocal({ ...local, jupiterApiKey: e.target.value })}
             />
-            <label className="text-muted" style={{ fontSize: 11, display: 'block', margin: '10px 0 4px' }}>
-              Solana RPC
+            <label className="text-muted" style={{ fontSize: 12, display: 'block', margin: '10px 0 4px', fontFamily: 'var(--font-mono)' }}>
+              SOLANA.RPC
             </label>
             <input
               className="input"
@@ -76,10 +76,10 @@ export function SettingsModal({ settings, onChange, onClose }: Props) {
           </section>
 
           <section>
-            <h3 className="font-display" style={{ fontSize: 14, marginBottom: 8 }}>AI / LM Studio</h3>
+            <h3 className="font-display" style={{ fontSize: 9, marginBottom: 8, color: 'var(--cyan)' }}>AI.LINK / LM STUDIO</h3>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
               <div>
-                <label className="text-muted" style={{ fontSize: 11 }}>Base URL</label>
+                <label className="text-muted" style={{ fontSize: 12, fontFamily: 'var(--font-mono)' }}>BASE.URL</label>
                 <input
                   className="input"
                   value={local.ai.baseUrl}
@@ -87,7 +87,7 @@ export function SettingsModal({ settings, onChange, onClose }: Props) {
                 />
               </div>
               <div>
-                <label className="text-muted" style={{ fontSize: 11 }}>Model</label>
+                <label className="text-muted" style={{ fontSize: 12, fontFamily: 'var(--font-mono)' }}>MODEL</label>
                 <input
                   className="input"
                   value={local.ai.model}
@@ -95,8 +95,8 @@ export function SettingsModal({ settings, onChange, onClose }: Props) {
                 />
               </div>
             </div>
-            <label className="text-muted" style={{ fontSize: 11, display: 'block', margin: '8px 0 4px' }}>
-              Skills (comma-separated)
+            <label className="text-muted" style={{ fontSize: 12, display: 'block', margin: '8px 0 4px', fontFamily: 'var(--font-mono)' }}>
+              SKILLS (comma-separated)
             </label>
             <input
               className="input"
@@ -108,8 +108,8 @@ export function SettingsModal({ settings, onChange, onClose }: Props) {
                 })
               }
             />
-            <label className="text-muted" style={{ fontSize: 11, display: 'block', margin: '8px 0 4px' }}>
-              Custom rules (one per line)
+            <label className="text-muted" style={{ fontSize: 12, display: 'block', margin: '8px 0 4px', fontFamily: 'var(--font-mono)' }}>
+              RULES (one per line)
             </label>
             <textarea
               className="input"
@@ -126,11 +126,11 @@ export function SettingsModal({ settings, onChange, onClose }: Props) {
           </section>
 
           <section>
-            <h3 className="font-display" style={{ fontSize: 14, marginBottom: 8 }}>Custom Connections</h3>
+            <h3 className="font-display" style={{ fontSize: 9, marginBottom: 8, color: 'var(--amber)' }}>CUSTOM.LINKS</h3>
             <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
               <input
                 className="input"
-                placeholder="Name"
+                placeholder="NAME"
                 value={newConn.name}
                 onChange={(e) => setNewConn({ ...newConn, name: e.target.value })}
               />
@@ -140,29 +140,29 @@ export function SettingsModal({ settings, onChange, onClose }: Props) {
                 value={newConn.url}
                 onChange={(e) => setNewConn({ ...newConn, url: e.target.value })}
               />
-              <button className="btn btn-green" onClick={addConnection}>Add</button>
+              <button className="btn btn-green" onClick={addConnection}>ADD</button>
             </div>
             {local.connections.map((c) => (
-              <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, padding: '4px 0' }}>
+              <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, padding: '4px 0', fontFamily: 'var(--font-mono)' }}>
                 <span>
                   {c.name} <span className="text-muted">({c.type})</span>
                 </span>
                 <button
                   className="btn btn-ghost"
-                  style={{ fontSize: 10 }}
+                  style={{ fontSize: 7 }}
                   onClick={() =>
                     setLocal({ ...local, connections: local.connections.filter((x) => x.id !== c.id) })
                   }
                 >
-                  Remove
+                  PURGE
                 </button>
               </div>
             ))}
           </section>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
-            <button className="btn btn-ghost" onClick={onClose}>Cancel</button>
-            <button className="btn btn-green" onClick={save}>Save</button>
+            <button className="btn btn-ghost" onClick={onClose}>ABORT</button>
+            <button className="btn btn-green" onClick={save}>COMMIT</button>
           </div>
         </div>
       </div>
