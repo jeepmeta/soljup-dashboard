@@ -1,4 +1,6 @@
 import type { CanvasWidget, SavedCoin } from '../types';
+import { AnimatePresence, motion } from 'motion/react';
+import { PriceChart } from './PriceChart';
 
 interface Props {
   widgets: CanvasWidget[];
@@ -8,138 +10,81 @@ interface Props {
 }
 
 export function CanvasBoard({ widgets, setWidgets, activeCoin, price }: Props) {
-  const addBlank = () => {
-    setWidgets((w) => [
-      ...w,
-      {
-        id: crypto.randomUUID(),
-        type: 'blank',
-        title: `CANVAS.${String(w.length + 1).padStart(2, '0')}`,
-        x: 0,
-        y: 0,
-        w: 1,
-        h: 1,
-      },
-    ]);
-  };
-
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', gap: 6 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span className="font-display" style={{ fontSize: 9, color: 'var(--cyan)' }}>
-          OPEN.CANVASES
-          {activeCoin && (
-            <span
-              className="text-muted"
-              style={{ fontFamily: 'var(--font-mono)', fontSize: 14, marginLeft: 10, letterSpacing: '0.04em' }}
+    <section className="market-workspace">
+      <div className="widget-grid">
+        <AnimatePresence initial={false}>
+          {widgets.map((widget) => (
+            <motion.article
+              key={widget.id}
+              layout
+              className={`panel widget-card widget-span-${Math.min(widget.w, 3)} widget-row-${Math.min(widget.h, 2)}`}
+              initial={{ opacity: 0, scale: 0.97, y: 12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.97, y: 8 }}
+              transition={{ duration: 0.24, ease: 'easeOut' }}
             >
-              · {activeCoin.symbol}
-              {price != null && (
-                <span className="text-green" style={{ marginLeft: 8 }}>
-                  ${price < 0.01 ? price.toExponential(3) : price.toLocaleString(undefined, { maximumFractionDigits: 6 })}
-                </span>
-              )}
-            </span>
-          )}
-        </span>
-        <button className="btn btn-orange" onClick={addBlank}>
-          + SLOT
-        </button>
-      </div>
-
-      <div
-        style={{
-          flex: 1,
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gridAutoRows: 'minmax(140px, 1fr)',
-          gap: 6,
-          minHeight: 0,
-          overflowY: 'auto',
-        }}
-      >
-        {widgets.map((w) => (
-          <div
-            key={w.id}
-            className="panel pixel-frame"
-            style={{
-              gridColumn: `span ${Math.min(w.w, 3)}`,
-              gridRow: `span ${w.h}`,
-              display: 'flex',
-              flexDirection: 'column',
-              minHeight: 120,
-            }}
-          >
-            <div className="panel-header" style={{ fontSize: 8 }}>
-              <span>{w.title}</span>
-              <button
-                className="btn btn-ghost"
-                style={{ padding: '2px 6px', fontSize: 7 }}
-                onClick={() => setWidgets((prev) => prev.filter((x) => x.id !== w.id))}
-              >
-                X
-              </button>
-            </div>
-            <div style={{ flex: 1, padding: 10, overflow: 'auto' }}>
-              {w.type === 'chart' && (
-                <div className="canvas-slot" style={{ height: '100%', minHeight: 100, borderStyle: 'solid' }}>
-                  <div style={{ textAlign: 'center' }}>
-                    <div className="font-display text-cyan" style={{ fontSize: 9, marginBottom: 8 }}>
-                      CHART · {activeCoin?.symbol ?? 'NO.TGT'}
-                    </div>
-                    <div className="text-muted" style={{ fontFamily: 'var(--font-mono)', fontSize: 13 }}>
-                      PRICE FEED / DRAWING LAYER
-                      <br />
-                      AI → TREND · H&amp;S · ELLIOTT HOOKS
+              <div className="widget-heading">
+                <div>
+                  <h2>{widget.title}</h2>
+                </div>
+                <button
+                  type="button"
+                  className="icon-button"
+                  aria-label={`Remove ${widget.title}`}
+                  onClick={() => setWidgets((current) => current.filter((item) => item.id !== widget.id))}
+                >
+                  x
+                </button>
+              </div>
+              <div className="widget-content">
+                {widget.type === 'chart' && (
+                  <PriceChart coin={activeCoin} />
+                )}
+                {widget.type === 'stats' && (
+                  <div className="stats-list">
+                    <StatRow label="Current price" value={price != null
+                      ? `$${price < 0.01 ? price.toExponential(3) : price.toLocaleString(undefined, { maximumFractionDigits: 6 })}`
+                      : 'Waiting for price'} />
+                    <StatRow label="Token address" value={activeCoin ? `${activeCoin.id.slice(0, 6)}…${activeCoin.id.slice(-4)}` : '—'} />
+                    <StatRow label="Decimals" value={String(activeCoin?.decimals ?? '—')} />
+                  </div>
+                )}
+                {widget.type === 'news' && (
+                  <div className="signal-empty">
+                    <span className="signal-indicator" aria-hidden="true" />
+                    <div>
+                      <strong>Connect a signal source</strong>
+                      <p>Add an RSS or custom connection in Settings to bring market updates into this panel.</p>
                     </div>
                   </div>
-                </div>
-              )}
-              {w.type === 'stats' && (
-                <div style={{ fontSize: 13, display: 'flex', flexDirection: 'column', gap: 8, fontFamily: 'var(--font-mono)' }}>
-                  <StatRow label="PX" value={price != null ? `$${price}` : '—.—'} />
-                  <StatRow label="MINT" value={activeCoin?.id.slice(0, 8) + '…' || '—'} />
-                  <StatRow label="DEC" value={String(activeCoin?.decimals ?? '—')} />
-                  <div className="stat-bar">
-                    <div className="stat-bar-fill" style={{ width: '62%' }} />
+                )}
+                {widget.type === 'blank' && (
+                  <div className="custom-view-empty">
+                    <span aria-hidden="true">+</span>
+                    <div>
+                      <strong>Your view, your layout</strong>
+                      <p>This space is ready for a custom widget or script output.</p>
+                    </div>
                   </div>
-                  <span className="text-muted" style={{ fontSize: 12 }}>LIQ / VOL METERS — LINK DATA</span>
-                </div>
-              )}
-              {w.type === 'news' && (
-                <div className="text-muted" style={{ fontFamily: 'var(--font-mono)', fontSize: 13, lineHeight: 1.45 }}>
-                  SIG.INTEL BUFFER
-                  <br />
-                  RSS / SOCIAL / ON-CHAIN ALERTS
-                  <br />
-                  <span style={{ color: 'var(--text-secondary)' }}>
-                    RELIABILITY FILTER ACTIVE · CFG CONNECTIONS
-                  </span>
-                </div>
-              )}
-              {w.type === 'blank' && (
-                <div className="canvas-slot" style={{ height: '100%', minHeight: 80 }}>
-                  DROP · SCRIPT.OUT · WIDGET · AI.VIEW
-                </div>
-              )}
-              {w.type === 'script-output' && (
-                <pre style={{ fontSize: 12, color: 'var(--phosphor)', whiteSpace: 'pre-wrap', fontFamily: 'var(--font-mono)' }}>
-                  {w.content || '// script output'}
-                </pre>
-              )}
-            </div>
-          </div>
-        ))}
+                )}
+                {widget.type === 'script-output' && (
+                  <pre className="script-output">{widget.content || '// Script output will appear here.'}</pre>
+                )}
+              </div>
+            </motion.article>
+          ))}
+        </AnimatePresence>
       </div>
-    </div>
+    </section>
   );
 }
 
 function StatRow({ label, value }: { label: string; value: string }) {
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-      <span className="text-muted">{label}</span>
-      <span style={{ color: 'var(--phosphor)', fontVariantNumeric: 'tabular-nums' }}>{value}</span>
+    <div className="stat-row">
+      <span>{label}</span>
+      <span className="stat-value" title={value}>{value}</span>
     </div>
   );
 }

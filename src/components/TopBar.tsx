@@ -1,58 +1,38 @@
+import { motion } from 'motion/react';
+
 interface Props {
   status: string;
   activeSymbol?: string;
-  onOpenSettings: () => void;
 }
 
-export function TopBar({ status, activeSymbol, onOpenSettings }: Props) {
+export function TopBar({ status, activeSymbol }: Props) {
+  const statusClass = /limited|fail|not found/i.test(status)
+    ? 'is-warning'
+    : /search|analyz/i.test(status)
+      ? 'is-busy'
+      : '';
+
   return (
-    <header
-      className="panel"
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '6px 12px',
-        margin: 8,
-        marginBottom: 0,
-      }}
+    <motion.header
+      className="topbar panel"
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: 'easeOut' }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-        <span className="font-display" style={{ fontSize: 10, color: 'var(--phosphor)' }}>
-          <span className="led" />
-          SOLJUP<span style={{ color: 'var(--text-muted)', margin: '0 6px' }}>//</span>
-          <span style={{ color: 'var(--cyan)' }}>TA-PIPE</span>
-        </span>
-        <span className="text-muted" style={{ fontFamily: 'var(--font-hud)', fontSize: 14 }}>
-          RETRO-FUTURIST MARKET HUD
-        </span>
-        {activeSymbol && (
-          <span
-            className="live-glow"
-            style={{
-              padding: '3px 10px',
-              border: '1px solid var(--phosphor)',
-              fontFamily: 'var(--font-pixel)',
-              fontSize: 9,
-              letterSpacing: '0.1em',
-              background: 'rgba(51,255,102,0.06)',
-            }}
-          >
-            TGT::{activeSymbol}
-          </span>
-        )}
+      <div className="brand-lockup">
+        <span className="brand-mark" aria-hidden="true">S</span>
+        <div>
+          <div className="brand-name">SolJup</div>
+          <div className="brand-caption">Solana market workspace</div>
+        </div>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <span
-          className="text-muted"
-          style={{ fontFamily: 'var(--font-mono)', fontSize: 13, maxWidth: 280, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-        >
-          {status}
+      <div className="topbar-meta">
+        {activeSymbol && <span className="active-token-pill">{activeSymbol}</span>}
+        <span className="connection-status">
+          <span className={`status-dot ${statusClass}`} aria-hidden="true" />
+          <span>{status}</span>
         </span>
-        <button className="btn btn-metal" onClick={onOpenSettings}>
-          SYS.CFG
-        </button>
       </div>
-    </header>
+    </motion.header>
   );
 }

@@ -25,3 +25,7 @@ dist-ssr
 
 # Tauri
 src-tauri/target
+
+# Python
+__pycache__/
+*.py[cod]

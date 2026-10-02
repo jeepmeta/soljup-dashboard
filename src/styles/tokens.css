@@ -1,0 +1,67 @@
+@theme {
+  --font-sans: "Inter", "Avenir Next", Avenir, ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  --font-display: "Pirata One", Georgia, serif;
+  --font-body: "Alegreya Sans", Georgia, serif;
+  --font-pixel: "Press Start 2P", "Courier New", monospace;
+
+  --color-page: #0d2227;
+  --color-surface: #3a2c22;
+  --color-surface-soft: #493627;
+  --color-surface-inset: #142528;
+  --color-ink: #f2e6c9;
+  --color-ink-soft: #d9c69e;
+  --color-muted: #c0b18f;
+  --color-line: #70563a;
+  --color-line-strong: #c49a5b;
+  --color-clay: #8d6a49;
+  --color-accent: #e3b760;
+  --color-accent-strong: #f1ce82;
+  --color-accent-wash: rgba(207, 157, 75, 0.16);
+  --color-positive: #a7d18c;
+  --color-positive-wash: rgba(120, 174, 106, 0.16);
+  --color-warning: #f0aa55;
+  --color-warning-wash: rgba(202, 121, 52, 0.16);
+  --color-danger: #ed8a72;
+
+  --radius-clay: 20px;
+  --shadow-clay:
+    inset 0 1px 0 rgba(255, 225, 172, 0.24),
+    inset 0 -2px 0 rgba(12, 17, 16, 0.22),
+    0 4px 0 #172123,
+    0 12px 26px rgba(0, 0, 0, 0.3);
+  --shadow-clay-raised:
+    inset 0 1px 0 rgba(255, 225, 172, 0.22),
+    0 3px 0 #172123,
+    0 9px 18px rgba(0, 0, 0, 0.25);
+  --shadow-clay-inset:
+    inset 0 2px 5px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 225, 172, 0.1);
+}
+
+:root {
+  color-scheme: dark;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--page);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  --page: var(--color-page);
+  --surface: var(--color-surface);
+  --surface-soft: var(--color-surface-soft);
+  --surface-inset: var(--color-surface-inset);
+  --ink: var(--color-ink);
+  --ink-soft: var(--color-ink-soft);
+  --muted: var(--color-muted);
+  --line: var(--color-line);
+  --line-strong: var(--color-line-strong);
+  --purple: var(--color-accent);
+  --purple-dark: var(--color-accent-strong);
+  --purple-wash: var(--color-accent-wash);
+  --mint: var(--color-positive);
+  --mint-wash: var(--color-positive-wash);
+  --orange: var(--color-warning);
+  --orange-wash: var(--color-warning-wash);
+  --red: var(--color-danger);
+}

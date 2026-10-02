@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from 'motion/react';
 import type { SavedCoin } from '../types';
 
 interface Props {
@@ -10,93 +11,64 @@ interface Props {
 
 export function CoinList({ coins, prices, activeMint, onSelect, onRemove }: Props) {
   return (
-    <div style={{ flex: 1, overflowY: 'auto', padding: '0 4px 8px' }}>
-      {coins.map((c, i) => {
-        const price = prices[c.id];
-        const idx = String(i + 1).padStart(2, '0');
-        return (
-          <div
-            key={c.id}
-            className={`coin-item ${activeMint === c.id ? 'active' : ''}`}
-            onClick={() => onSelect(c.id)}
-          >
-            <div
-              style={{
-                width: 28,
-                height: 28,
-                background: 'var(--bg-inset)',
-                border: '1px solid var(--border)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontFamily: 'var(--font-pixel)',
-                fontSize: 7,
-                color: activeMint === c.id ? 'var(--phosphor)' : 'var(--text-muted)',
-                flexShrink: 0,
-              }}
+    <div className="coin-list">
+      <AnimatePresence initial={false}>
+        {coins.map((coin, index) => {
+          const price = prices[coin.id];
+          const isActive = activeMint === coin.id;
+          return (
+            <motion.div
+              key={coin.id}
+              className={`coin-row ${isActive ? 'is-active' : ''}`}
+              layout
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, x: -12 }}
+              transition={{ duration: 0.2, delay: Math.min(index * 0.025, 0.2) }}
             >
-              {c.symbol.slice(0, 2)}
-            </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 4 }}>
-                <span
-                  style={{
-                    fontFamily: 'var(--font-pixel)',
-                    fontSize: 8,
-                    letterSpacing: '0.06em',
-                    color: activeMint === c.id ? 'var(--phosphor)' : 'var(--text-primary)',
-                  }}
-                >
-                  <span className="text-muted" style={{ fontSize: 7, marginRight: 4 }}>{idx}</span>
-                  {c.symbol}
-                </span>
-                <span
-                  style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: 13,
-                    color: price != null ? 'var(--phosphor)' : 'var(--text-dim)',
-                    fontVariantNumeric: 'tabular-nums',
-                  }}
-                >
-                  {price != null
-                    ? price < 0.01
-                      ? price.toExponential(2)
-                      : price.toLocaleString(undefined, { maximumFractionDigits: 6 })
-                    : '—.—'}
-                </span>
-              </div>
-              <div
-                className="text-muted"
-                style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: 12,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                }}
+              <button
+                type="button"
+                className="coin-item"
+                aria-pressed={isActive}
+                onClick={() => onSelect(coin.id)}
               >
-                {c.name}
-              </div>
-            </div>
-            <button
-              className="btn btn-ghost"
-              style={{ padding: '4px 6px', fontSize: 7 }}
-              onClick={(e) => {
-                e.stopPropagation();
-                onRemove(c.id);
-              }}
-              title="Purge from watchlist"
-            >
-              X
-            </button>
-          </div>
-        );
-      })}
+                <span className="coin-avatar" aria-hidden="true">
+                  {coin.logoURI
+                    ? <img src={coin.logoURI} alt="" loading="lazy" />
+                    : coin.symbol.slice(0, 2)}
+                </span>
+                <span className="coin-details">
+                  <span className="coin-name-line">
+                    <span className="coin-symbol">{coin.symbol}</span>
+                    <span className={`coin-price ${price == null ? 'is-empty' : ''}`}>
+                      {price != null
+                        ? `$${price < 0.01
+                          ? price.toExponential(2)
+                          : price.toLocaleString(undefined, { maximumFractionDigits: 6 })}`
+                        : 'Price pending'}
+                    </span>
+                  </span>
+                  <span className="coin-full-name" title={coin.name}>{coin.name}</span>
+                </span>
+              </button>
+              <button
+                type="button"
+                className="coin-remove"
+                onClick={() => onRemove(coin.id)}
+                aria-label={`Remove ${coin.symbol} from watchlist`}
+                title={`Remove ${coin.symbol}`}
+              >
+                ×
+              </button>
+            </motion.div>
+          );
+        })}
+      </AnimatePresence>
       {coins.length === 0 && (
-        <div className="text-muted" style={{ padding: 16, textAlign: 'center', fontFamily: 'var(--font-mono)', fontSize: 13 }}>
-          // EMPTY BUFFER
-          <br />
-          PASTE MINT OR QUERY SYMBOL
+        <div className="empty-state">
+          <span className="empty-state-mark" aria-hidden="true">+</span>
+          <strong>Your watchlist is clear</strong>
+          <span>Add a token above to start tracking its price.</span>
         </div>
       )}
     </div>
